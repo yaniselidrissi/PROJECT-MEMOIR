@@ -1,0 +1,31 @@
+{
+  "configurations": [
+		     {
+		       "name": " Make MPM",
+			 "type": "cppdbg",
+			 "request": "launch",
+			 "program": "${fileDirname}/../bin/mpm",
+			 "args": ["data/graph2.dta"],
+			 "stopAtEntry": false,
+			 "cwd": "${fileDirname}",
+			 "environment": [],
+			 "externalConsole": false,
+			 "MIMode": "gdb",
+			 "setupCommands": [
+					   {
+					     "description": "Activer l'impression en mode Pretty pour gdb",
+					       "text": "-enable-pretty-printing",
+					       "ignoreFailures": true
+					       },
+					   {
+					     "description": "Définir la version désassemblage sur Intel",
+					       "text": "-gdb-set disassembly-flavor intel",
+					       "ignoreFailures": true
+					       }
+					   ],
+			 "preLaunchTask": "make: all",
+			 "miDebuggerPath": "/usr/bin/gdb"
+			 },
+		     ],
+    "version": "2.0.0"
+}
