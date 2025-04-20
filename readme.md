@@ -6,23 +6,25 @@ Ce projet permet de gérer des tâches (appelées "jobs") qui dépendent les une
 
 ## Fichiers importants
 
-- `main.c` : le point de départ du programme.
-- `job.c` : gère les infos sur chaque job (comme le titre, le rang, etc.).
-- `io.c` : lit les fichiers, trie les jobs.
-- `rank.c` : calcule les rangs, les marges et détecte les jobs critiques.
-- `list.c` : gère une liste chaînée pour stocker les jobs.
-- Les fichiers `.h` dans `include/` contiennent les définitions des fonctions.
+- main.c : le point de départ du programme.
+- job.c : gère les infos sur chaque job (comme le titre, le rang, etc.).
+- io.c : lit les fichiers, trie les jobs.
+- rank.c : calcule les rangs, les marges et détecte les jobs critiques.
+- list.c : gère une liste chaînée pour stocker les jobs.
+- Les fichiers .h dans include/ contiennent les définitions des fonctions.
 
 ## Comment ça marche
 
-- Le programme lit un fichier `.dta` (comme `data/graph2.dta`) pour récupérer les jobs.
+- Le programme lit un fichier .dta (comme data/graph2.dta) pour récupérer les jobs.
 - Chaque job peut dépendre d’un ou plusieurs autres.
 - Le programme trie les jobs et calcule des infos comme leur rang et leur marge.
 - Il montre les jobs critiques (ceux qu’on ne peut pas retarder).
+- Il affiche aussi les précédences et les postériorités de chaque job.
 
 ## Pour compiler
 
-Si tu es sur Windows avec MinGW :
+- Si tu es sur Windows avec MinGW :
 
 ```bash
 mingw32-make run
+
