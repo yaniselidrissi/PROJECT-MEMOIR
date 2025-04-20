@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include "list.h"
+#include "job.h"
+#include "rank.h"
+#include "io.h"
+
+
+int main(int argc, char ** argv){
+    if(argc < 2) exit(-1);
+
+    list_t * G = read_graph(argv[1]);
+    printf("Liste des tâches lue\n");
+    view_list(G, &view_job);
+
+    printf("Liste des tâches triée par degré d'entrée croissant\n");
+    quick_sort(G, &iDegreeJobCmp);
+    view_list(G,&view_job);
+
+    printf("Liste des tâches triée par rang croissant\n");
+    ranking(G);
+    view_list(G,&view_job);
+
+    printf("Prune edges\n");
+    prune(G);
+    view_list(G,&view_job);
+
+    printf("\nMarges totales des tâches\n");
+    marges(G);
+    view_list(G,&view_job);
+    return 0;
+}
