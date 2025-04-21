@@ -33,7 +33,6 @@ void* take_out(list_t* L);
 void* take_out_front(list_t* L);
 void queue(list_t* L, void* data);
 
-// Autres
 void remove_item(list_t* L, void* data);
 void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*));
 void set_suc(list_elm_t* E, list_elm_t* suc);
