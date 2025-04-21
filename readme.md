@@ -1,23 +1,23 @@
 # Résumé du Projet : Gestion de Tâches avec Dépendances
 
 ## Objectif du projet
-Ce projet vise à développer un système de gestion de tâches sous forme de graphe, où chaque tâche a une durée spécifique, et les tâches peuvent avoir des dépendances entre elles. L'objectif est de modéliser ces tâches et leurs relations, puis de calculer le **rang** des tâches ainsi que leurs **marges** totales et libres. Ce projet inclut des opérations telles que le **tri des tâches** en fonction de divers critères, la **prune** des dépendances inutiles, et le calcul de la **marge**.
+Ce projet vise à développer un système de gestion de tâches sous forme de graphe, où chaque tâche a une durée spécifique, et les tâches peuvent avoir des dépendances entre elles. L'objectif est de modéliser ces tâches et leurs relations, puis de calculer le rang des tâches ainsi que leurs marges totales et libres. Ce projet inclut des opérations telles que le tri des tâches en fonction de divers critères, la prune des dépendances inutiles, et le calcul de la marge.
 
 ## Fonctionnalités principales
 1. **Lecture des tâches depuis un fichier**
-   - Les tâches sont lues depuis un fichier `.dta` contenant les informations sur les tâches (nom et durée) ainsi que les dépendances entre elles.
+   - Les tâches sont lues depuis un fichier .dta contenant les informations sur les tâches nom et durée ainsi que les dépendances entre elles.
 
 2. **Tri des tâches**
-   - Les tâches sont triées en fonction de leur **degré d'entrée** et de leur **rang**, grâce à une fonction de tri rapide (quicksort).
+   - Les tâches sont triées en fonction de leur degré d'entrée et de leur rang, grâce à une fonction de tri rapide.
 
 3. **Calcul des rangs**
-   - Chaque tâche reçoit un **rang** qui reflète son ordre dans le processus de travail, en prenant en compte les dépendances.
+   - Chaque tâche reçoit un rang qui reflète son ordre dans le processus de travail, en prenant en compte les dépendances.
 
 4. **Prune des dépendances inutiles**
-   - La fonction **prune** permet d’éliminer certaines dépendances non nécessaires afin d'optimiser le graphe.
+   - La fonction prune permet d’éliminer certaines dépendances non nécessaires afin d'optimiser le graphe.
 
 5. **Calcul des marges**
-   - Les marges totales et libres des tâches sont calculées. La **marge totale** détermine le délai maximal pendant lequel une tâche peut être retardée sans affecter le projet, tandis que la **marge libre** représente l’espace de manœuvre d’une tâche sans interférer avec les autres.
+   - Les marges totales et libres des tâches sont calculées. La marge totale détermine le délai maximal pendant lequel une tâche peut être retardée sans affecter le projet, tandis que la marge libre représente l’espace de manœuvre d’une tâche sans interférer avec les autres.
 
 ## Fonctionnement du Programme
 
