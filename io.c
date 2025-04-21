@@ -13,7 +13,7 @@ void view_list(list_t* L, void (*ptrf)(void*)) {
     }
 }
 
-// Tri rapide (quicksort) d'une liste
+// Tri rapide d'une liste
 void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
     if (!L || L->numelm <= 1) return;
 
