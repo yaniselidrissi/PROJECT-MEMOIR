@@ -15,6 +15,7 @@ void del_list(list_t** ptrL, void (*ptrf)(void*)) {
     assert(ptrL && *ptrL);
     clean(*ptrL);
     free(*ptrL);
+    (void)ptrf;
     *ptrL = NULL;
 }
 
@@ -75,7 +76,8 @@ void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*)) {
     L->numelm++;
 }
 
-void* take_out(list_t* L) {
+
+void* take_out_front(list_t* L) {
     if (is_empty(L)) return NULL;
     list_elm_t* E = L->head;
     void* data = E->data;
@@ -139,7 +141,6 @@ void find(list_t* L, void** ptrKey, int (*cmpFct)(void*, void*), void (*delFct)(
         E = get_suc(E);
     }
 
-    // Si non trouvé
     if (delFct) delFct(*ptrKey);
     *ptrKey = NULL;
 }
