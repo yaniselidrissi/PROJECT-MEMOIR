@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <stdbool.h>
@@ -20,7 +21,7 @@ void del_list(list_t** ptrL, void (*ptrf)(void*));
 void clean(list_t* L);
 bool is_empty(list_t* L);
 
-// Accès
+// AccÃ¨s
 list_elm_t* get_head(list_t* L);
 list_elm_t* get_tail(list_t* L);
 list_elm_t* get_suc(list_elm_t* E);
@@ -29,7 +30,19 @@ void* get_data(list_elm_t* E);
 
 // File
 void* take_out(list_t* L);
+void* take_out_front(list_t* L);
 void queue(list_t* L, void* data);
 
-// Ajouté ici
+// Autres
+void remove_item(list_t* L, void* data);
+void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*));
 void set_suc(list_elm_t* E, list_elm_t* suc);
+void find(list_t* L, void** ptrKey, int (*cmpFct)(void*, void*), void (*delFct)(void*));
+
+
+
+
+
+
+
+
