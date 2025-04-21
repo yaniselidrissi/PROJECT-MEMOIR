@@ -1,4 +1,3 @@
-#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,24 +6,31 @@
 #include "job.h"
 #include "io.h"
 
-// Déclaration anticipée
-void partition(list_t* L, list_elm_t* pivot, list_t* val_inf_pivot, list_t* val_sup_pivot, int (*cmpFct)(void*, void*));
-
-// Affichage de la liste
+// Affichage des éléments d'une liste
 void view_list(list_t* L, void (*ptrf)(void*)) {
     for (list_elm_t* E = get_head(L); E; E = get_suc(E)) {
         ptrf(get_data(E));
     }
 }
 
+// Tri rapide (quicksort) d'une liste
 void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
-    if (L->numelm <= 1) return;
+    if (!L || L->numelm <= 1) return;
 
-    list_elm_t* pivot = L->head;
+    list_elm_t* pivot = get_head(L);
     list_t* smaller = new_list();
     list_t* greater = new_list();
 
-    partition(L, pivot, smaller, greater, cmpFct);
+    for (list_elm_t* E = get_suc(pivot); E; E = get_suc(E)) {
+        void* data = get_data(E);
+        if (cmpFct(data, pivot->data) < 0) {
+            queue(smaller, data);
+        }
+        else {
+            queue(greater, data);
+        }
+    }
+
     quick_sort(smaller, cmpFct);
     quick_sort(greater, cmpFct);
 
@@ -37,25 +43,46 @@ void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
         queue(L, get_data(E));
     }
 
-    set_suc(pivot, greater->head);
     del_list(&smaller, NULL);
     del_list(&greater, NULL);
-}
+}  // Fin correcte de quick_sort
 
-void partition(list_t* L, list_elm_t* pivot, list_t* val_inf_pivot, list_t* val_sup_pivot, int (*cmpFct)(void*, void*)) {
-    for (list_elm_t* E = get_suc(pivot); E; E = get_suc(E)) {
-        void* data = get_data(E);
-        if (cmpFct(data, pivot->data) < 0) {
-            queue(val_inf_pivot, data);
-        }
-        else {
-            queue(val_sup_pivot, data);
-        }
+// Lecture d'un fichier .dta et construction du graphe
+list_t* read_graph(char* path) {
+    FILE* f = fopen(path, "r");
+    if (!f) {
+        perror("Erreur d'ouverture du fichier");
+        return NULL;
     }
-}
 
-int titleJobCmp(void* A, void* B) {
-    job_t* J1 = A;
-    job_t* J2 = B;
-    return strcmp(get_job_title(J1), get_job_title(J2));
+    int nb_jobs;
+    fscanf(f, "%d\n", &nb_jobs);
+
+    list_t* G = new_list();
+    job_t** jobs = malloc(nb_jobs * sizeof(job_t*));
+
+    // Lecture des jobs
+    for (int i = 0; i < nb_jobs; i++) {
+        char name[100];
+        double life;
+        fscanf(f, "%s %lf\n", name, &life);
+        jobs[i] = new_job(name);
+        set_job_life(jobs[i], life);
+        queue(G, jobs[i]);
+    }
+
+    // Lecture des dépendances
+    int pred, succ;
+    while (fscanf(f, "%d %d", &pred, &succ) == 2) {
+        job_t* J1 = jobs[pred];
+        job_t* J2 = jobs[succ];
+        ordered_insert(J1->posteriority, J2, &titleJobCmp);
+        ordered_insert(J2->precedence, J1, &titleJobCmp);
+        incr_job_oDegree(J1);
+        incr_job_iDegree(J2);
+    }
+
+    free(jobs);
+    fclose(f);
+    return G;
 }
