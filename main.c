@@ -12,14 +12,14 @@ int main(int argc, char ** argv){
     if(argc < 2) exit(-1);
 
     list_t * G = read_graph(argv[1]);
-    printf("Liste des tâches lue\n");
+    printf("Liste des taches lue\n");
     view_list(G, &view_job);
 
-    printf("Liste des tâches triée par degré d'entrée croissant\n");
+    printf("Liste des taches triee par degre d'entree croissant\n");
     quick_sort(G, &iDegreeJobCmp);
     view_list(G,&view_job);
 
-    printf("Liste des tâches triée par rang croissant\n");
+    printf("Liste des taches triee par rang croissant\n");
     ranking(G);
     view_list(G,&view_job);
 
@@ -27,7 +27,7 @@ int main(int argc, char ** argv){
     prune(G);
     view_list(G,&view_job);
 
-    printf("\nMarges totales des tâches\n");
+    printf("\nMarges totales des taches\n");
     marges(G);
     view_list(G,&view_job);
     return 0;
