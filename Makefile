@@ -25,6 +25,6 @@ clean:
 	@rmdir /S /Q $(BIN_DIR) 2>nul || exit 0
 	@del /Q *.o 2>nul || exit 0
 
-# === Exécution du programme (avec fichier en argument)
+# === Exécution du programme
 run: all
 	$(EXEC) $(DATA)
