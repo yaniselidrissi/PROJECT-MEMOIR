@@ -1,9 +1,12 @@
+
 #include "job.h"
 #include "list.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
+#define UNDEF -9999
+
 
 void ranking(list_t* G) {
     list_t* ready = new_list();
@@ -17,8 +20,7 @@ void ranking(list_t* G) {
     }
 
     while (!is_empty(ready)) {
-        job_t* J = get_data(get_head(ready));
-        take_out(ready, J);
+        job_t* J = (job_t*)take_out_front(ready);
 
         int max_rank = -1;
         for (list_elm_t* E = get_head(J->precedence); E; E = get_suc(E)) {
@@ -37,7 +39,7 @@ void ranking(list_t* G) {
         }
     }
 
-    free(ready);
+    del_list(&ready, NULL);
 }
 
 static bool reachable(job_t* src, job_t* target) {
@@ -60,8 +62,8 @@ void prune(list_t* G) {
             next = get_suc(S);
             job_t* succ = get_data(S);
 
-            take_out(J->posteriority, succ);
-            take_out(succ->precedence, J);
+            remove_item(J->posteriority, succ);
+            remove_item(succ->precedence, J);
             decr_job_oDegree(J);
             decr_job_iDegree(succ);
 
@@ -76,14 +78,12 @@ void prune(list_t* G) {
 }
 
 void marges(list_t* G) {
-    // Initialiser au_plus_tot et au_plus_tard
     for (list_elm_t* E = get_head(G); E; E = get_suc(E)) {
         job_t* J = get_data(E);
         J->au_plus_tot = UNDEF;
         J->au_plus_tard = UNDEF;
     }
 
-    // Étape 1 : calcul au plus tôt (forward)
     bool changed;
     do {
         changed = false;
@@ -115,7 +115,6 @@ void marges(list_t* G) {
         }
     } while (changed);
 
-    // Étape 2 : calcul au plus tard (backward)
     double max_end = 0;
     for (list_elm_t* E = get_head(G); E; E = get_suc(E)) {
         job_t* J = get_data(E);
@@ -153,7 +152,6 @@ void marges(list_t* G) {
         }
     } while (changed);
 
-    // Étape 3 : marges et chemin critique
     for (list_elm_t* E = get_head(G); E; E = get_suc(E)) {
         job_t* J = get_data(E);
         J->marge_totale = J->au_plus_tard - J->au_plus_tot;
