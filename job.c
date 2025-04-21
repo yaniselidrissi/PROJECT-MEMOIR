@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "job.h"
 
-// Fonction locale pour dupliquer une chaîne (remplace strdup)
+// Fonction locale pour dupliquer une chaîne 
 static char* my_strdup(const char* s) {
     char* dup = malloc(strlen(s) + 1);
     if (dup) strcpy(dup, s);
