@@ -1,22 +1,24 @@
 #pragma once
-#include <stdbool.h>
 #include "list.h"
-#define UNDEF -2
+#include <stdbool.h>
 
-
-/** Des redondances possibles avec d'autres TAs ! */
-typedef struct {
-  char * title;                 // Nom de la tâche
-  double life;                  // Durée de la tâche
-  int input_degree;             // Son degré de dépendance
-  int output_degree;            // Les tâches qui en dépendent
-  int rank;                     // Rang de la tâche
-  int dyn_input_degree;         // Facilité de prog
-  list_t * precedence;   // Les tâches précédentes
-  list_t * posteriority; // Les tâches ultérieures
-  double au_plus_tot;           // Date au plus tôt
-  double au_plus_tard;          // Date au plus tard
-  double marge_totale;          // Marge totale
-  double marge_libre;           // Marge libre
-  bool critique;                // Une tâche critique ?
+typedef struct job {
+    char* title;
+    list_t* precedence;
+    list_t* posteriority;
+    int input_degree;
+    int output_degree;
+    int dyn_input_degree;
+    int rank;
+    double life;
+    double au_plus_tot;
+    double au_plus_tard;
+    double marge_totale;
+    double marge_libre;
+    bool critique;
 } job_t;
+
+
+void free_job(void* ptr);
+void view_job(void* ptr);
+const char* get_job_title(job_t* J);
