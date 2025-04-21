@@ -22,24 +22,20 @@ Ce projet vise à développer un système de gestion de tâches sous forme de gr
 ## Fonctionnement du Programme
 
 1. **Structure des données**
-   - **Tâches (`job_t`)** : Chaque tâche contient un titre, une durée (`life`), un rang, des listes de précédence et de postériorité, ainsi que des informations sur les dépendances (degré entrant et sortant).
-   - **Graphe (`list_t`)** : Le graphe est implémenté comme une liste de tâches. Chaque tâche peut être liée à d’autres tâches en fonction de leurs dépendances.
+   - Tâches job_t : Chaque tâche contient un titre, une durée life, un rang, des listes de précédence et de postériorité, ainsi que des informations sur les dépendances (degré entrant et sortant).
+   - Graphe list_t : Le graphe est implémenté comme une liste de tâches. Chaque tâche peut être liée à d’autres tâches en fonction de leurs dépendances.
 
 2. **Algorithmes utilisés**
-   - **Quicksort** : Un tri rapide est utilisé pour trier les tâches en fonction de leur degré d’entrée et de leur rang.
-   - **Calcul des rangs** : Les rangs des tâches sont calculés en tenant compte des tâches qui les précèdent.
-   - **Prune** : Cette fonction permet de simplifier le graphe en retirant les dépendances redondantes ou inutiles.
-   - **Calcul des marges** : Le programme calcule les marges totales et libres des tâches afin de déterminer les possibilités de planification flexible.
+   - Quicksort : Un tri rapide est utilisé pour trier les tâches en fonction de leur degré d’entrée et de leur rang.
+   - Calcul des rangs : Les rangs des tâches sont calculés en tenant compte des tâches qui les précèdent.
+   - Prune : Cette fonction permet de simplifier le graphe en retirant les dépendances redondantes ou inutiles.
+   - Calcul des marges : Le programme calcule les marges totales et libres des tâches afin de déterminer les possibilités de planification flexible.
 
-## Technologies utilisées
-- **Langage** : C
-- **Structure des données** : Listes chaînées, Graphes dirigés
-- **Algorithmes** : Tri rapide (quicksort), calcul de rangs et de marges
 
 ## Exécution du programme
-1. Le programme prend en entrée un fichier `.dta` contenant les informations sur les tâches et leurs dépendances.
+1. Le programme prend en entrée un fichier .dta contenant les informations sur les tâches et leurs dépendances.
 2. Il génère et affiche plusieurs informations : les tâches triées, leurs rangs, les marges totales et libres, ainsi que les dépendances après la fonction prune.
-3. Il est possible de compiler et exécuter le programme via un `Makefile` ou directement via la ligne de commande.
+3. Il est possible de compiler et exécuter le programme via un Makefile ou directement via la ligne de commande.
 
 ## Exemple de fichier d’entrée (graph.dta)
 (different de celui du cours avec l'exemple du cours boucle infini)
