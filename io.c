@@ -13,7 +13,7 @@ void view_list(list_t* L, void (*ptrf)(void*)) {
     }
 }
 
-// Tri rapide d'une liste
+// Tri rapide (quicksort) d'une liste
 void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
     if (!L || L->numelm <= 1) return;
 
@@ -45,7 +45,7 @@ void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
 
     del_list(&smaller, NULL);
     del_list(&greater, NULL);
-}  // Fin correcte de quick_sort
+}
 
 // Lecture d'un fichier .dta et construction du graphe
 list_t* read_graph(char* path) {
@@ -56,22 +56,26 @@ list_t* read_graph(char* path) {
     }
 
     int nb_jobs;
-    fscanf(f, "%d\n", &nb_jobs);
+    if (fscanf(f, "%d", &nb_jobs) != 1) {
+        fclose(f);
+        return NULL;
+    }
 
     list_t* G = new_list();
     job_t** jobs = malloc(nb_jobs * sizeof(job_t*));
+    assert(jobs);
 
     // Lecture des jobs
     for (int i = 0; i < nb_jobs; i++) {
-        char name[100];
+        char name[128];
         double life;
-        fscanf(f, "%s %lf\n", name, &life);
+        if (fscanf(f, "%127s %lf", name, &life) != 2) break;
         jobs[i] = new_job(name);
         set_job_life(jobs[i], life);
         queue(G, jobs[i]);
     }
 
-    // Lecture des dépendances
+    // Lecture des dépendances 
     int pred, succ;
     while (fscanf(f, "%d %d", &pred, &succ) == 2) {
         job_t* J1 = jobs[pred];
