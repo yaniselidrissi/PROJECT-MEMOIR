@@ -17,38 +17,33 @@ void view_list(list_t* L, void (*ptrf)(void*)) {
 void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
     if (!L || L->numelm <= 1) return;
 
-    list_elm_t* head = get_head(L);
-    void* pivot = get_data(head);
+    list_elm_t* pivot = get_head(L);
+    list_t* smaller = new_list();
+    list_t* greater = new_list();
 
-    list_t* left = new_list();
-    list_t* right = new_list();
-
-    // Partition
-    for (list_elm_t* E = get_suc(head); E; E = get_suc(E)) {
+    for (list_elm_t* E = get_suc(pivot); E; E = get_suc(E)) {
         void* data = get_data(E);
-        if (cmpFct(data, pivot) < 0)
-            queue(left, data);
+        if (cmpFct(data, pivot->data) < 0)
+            queue(smaller, data);
         else
-            queue(right, data);
+            queue(greater, data);
     }
 
-    // Recurse
-    quick_sort(left, cmpFct);
-    quick_sort(right, cmpFct);
+    quick_sort(smaller, cmpFct);
+    quick_sort(greater, cmpFct);
 
-    // Rebuild L
     clean(L);
-    for (list_elm_t* E = get_head(left); E; E = get_suc(E))
+    for (list_elm_t* E = get_head(smaller); E; E = get_suc(E))
         queue(L, get_data(E));
-    queue(L, pivot);
-    for (list_elm_t* E = get_head(right); E; E = get_suc(E))
+    queue(L, pivot->data);
+    for (list_elm_t* E = get_head(greater); E; E = get_suc(E))
         queue(L, get_data(E));
 
-    del_list(&left, NULL);
-    del_list(&right, NULL);
+    del_list(&smaller, NULL);
+    del_list(&greater, NULL);
 }
 
-// Lecture d'un fichier .dta et construction du graphe
+// Lecture d’un graphe depuis un fichier au format “Nom Durée [Liste de noms prédécesseurs] NIL”
 list_t* read_graph(char* path) {
     FILE* f = fopen(path, "r");
     if (!f) {
@@ -56,40 +51,38 @@ list_t* read_graph(char* path) {
         return NULL;
     }
 
-    int nb_jobs;
-    if (fscanf(f, "%d", &nb_jobs) != 1) {
-        fclose(f);
-        return NULL;
-    }
-
     list_t* G = new_list();
-    job_t** jobs = malloc(nb_jobs * sizeof(job_t*));
-    assert(jobs);
+    char name[128], token[128];
+    double life;
 
-    // Lecture des jobs
-    for (int i = 0; i < nb_jobs; i++) {
-        char name[100];
-        double life;
-        fscanf(f, "%s %lf", name, &life);
-        jobs[i] = new_job(name);
-        set_job_life(jobs[i], life);
-        queue(G, jobs[i]);
-    }
+    // Pour chaque ligne jusqu'à EOF
+    while (fscanf(f, "%127s %lf", name, &life) == 2) {
+        // 1) Création du job
+        job_t* J = new_job(name);
+        set_job_life(J, life);
+        queue(G, J);
 
-    // Lecture des dépendances (indices)
-    int pred, succ;
-    while (fscanf(f, "%d %d", &pred, &succ) == 2) {
-        if (pred >= 0 && pred < nb_jobs && succ >= 0 && succ < nb_jobs) {
-            job_t* J1 = jobs[pred];
-            job_t* J2 = jobs[succ];
-            ordered_insert(J1->posteriority, J2, &titleJobCmp);
-            ordered_insert(J2->precedence, J1, &titleJobCmp);
-            incr_job_oDegree(J1);
-            incr_job_iDegree(J2);
+        // 2) Lecture de la liste des prédécesseurs, jusqu’à "NIL"
+        while (fscanf(f, "%127s", token) == 1 && strcmp(token, "NIL") != 0) {
+            // Recherche du job prédécesseur par nom
+            job_t* pred = NULL;
+            for (list_elm_t* E = get_head(G); E; E = get_suc(E)) {
+                job_t* tmp = get_data(E);
+                if (strcmp(get_job_title(tmp), token) == 0) {
+                    pred = tmp;
+                    break;
+                }
+            }
+            if (pred) {
+                // Ajout de l’arête pred → J
+                ordered_insert(pred->posteriority, J, &titleJobCmp);
+                ordered_insert(J->precedence, pred, &titleJobCmp);
+                incr_job_oDegree(pred);
+                incr_job_iDegree(J);
+            }
         }
     }
 
-    free(jobs);
     fclose(f);
     return G;
 }
