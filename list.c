@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "list.h"
 
+// Crée une nouvelle liste vide
 list_t* new_list() {
     list_t* L = malloc(sizeof(list_t));
     assert(L);
@@ -11,35 +12,46 @@ list_t* new_list() {
     return L;
 }
 
+// Supprime la liste et libère ses éléments
+// ptrf est appelé sur chaque donnée si non NULL
 void del_list(list_t** ptrL, void (*ptrf)(void*)) {
     assert(ptrL && *ptrL);
-    clean(*ptrL);
+    list_elm_t* E = (*ptrL)->head;
+    while (E) {
+        list_elm_t* next = E->suc;
+        if (ptrf) ptrf(E->data);
+        free(E);
+        E = next;
+    }
     free(*ptrL);
-    (void)ptrf;
     *ptrL = NULL;
 }
 
+// Vide la liste mais conserve la structure
 void clean(list_t* L) {
     assert(L);
-    while (!is_empty(L)) {
-        list_elm_t* E = L->head;
-        L->head = E->suc;
+    list_elm_t* E = L->head;
+    while (E) {
+        list_elm_t* next = E->suc;
         free(E);
-        L->numelm--;
+        E = next;
     }
-    L->tail = NULL;
+    L->head = L->tail = NULL;
+    L->numelm = 0;
 }
 
 bool is_empty(list_t* L) {
     return (L->numelm == 0);
 }
 
+// Accès
 list_elm_t* get_head(list_t* L) { return L->head; }
 list_elm_t* get_tail(list_t* L) { return L->tail; }
 list_elm_t* get_suc(list_elm_t* E) { return E->suc; }
 list_elm_t* get_pred(list_elm_t* E) { return E->pred; }
 void* get_data(list_elm_t* E) { return E->data; }
 
+// Insertion ordonnée
 void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*)) {
     assert(L && cmp_ptrf);
     list_elm_t* new_elm = malloc(sizeof(list_elm_t));
@@ -55,7 +67,6 @@ void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*)) {
         while (E && cmp_ptrf(E->data, data) < 0) {
             E = E->suc;
         }
-
         if (!E) {
             new_elm->pred = L->tail;
             L->tail->suc = new_elm;
@@ -76,21 +87,20 @@ void ordered_insert(list_t* L, void* data, int (*cmp_ptrf)(void*, void*)) {
     L->numelm++;
 }
 
-
-void* take_out_front(list_t* L) {
+// Retire et retourne l'élément en tête (FIFO)
+void* take_out(list_t* L) {
     if (is_empty(L)) return NULL;
     list_elm_t* E = L->head;
     void* data = E->data;
-
     L->head = E->suc;
     if (L->head) L->head->pred = NULL;
     else L->tail = NULL;
-
     free(E);
     L->numelm--;
     return data;
 }
 
+// Suppression d'un élément spécifique
 void remove_item(list_t* L, void* data) {
     assert(L);
     list_elm_t* E = L->head;
@@ -98,17 +108,15 @@ void remove_item(list_t* L, void* data) {
         E = E->suc;
     }
     if (!E) return;
-
     if (E->pred) E->pred->suc = E->suc;
     else L->head = E->suc;
-
     if (E->suc) E->suc->pred = E->pred;
     else L->tail = E->pred;
-
     free(E);
     L->numelm--;
 }
 
+// Ajoute en fin de liste (queue)
 void queue(list_t* L, void* data) {
     assert(L);
     list_elm_t* new_elm = malloc(sizeof(list_elm_t));
@@ -116,7 +124,6 @@ void queue(list_t* L, void* data) {
     new_elm->data = data;
     new_elm->suc = NULL;
     new_elm->pred = L->tail;
-
     if (is_empty(L)) {
         L->head = L->tail = new_elm;
     }
@@ -125,22 +132,4 @@ void queue(list_t* L, void* data) {
         L->tail = new_elm;
     }
     L->numelm++;
-}
-
-void set_suc(list_elm_t* E, list_elm_t* suc) {
-    E->suc = suc;
-}
-
-void find(list_t* L, void** ptrKey, int (*cmpFct)(void*, void*), void (*delFct)(void*)) {
-    list_elm_t* E = get_head(L);
-    while (E) {
-        if (cmpFct(get_data(E), *ptrKey) == 0) {
-            *ptrKey = get_data(E);
-            return;
-        }
-        E = get_suc(E);
-    }
-
-    if (delFct) delFct(*ptrKey);
-    *ptrKey = NULL;
 }
