@@ -17,34 +17,35 @@ void view_list(list_t* L, void (*ptrf)(void*)) {
 void quick_sort(list_t* L, int (*cmpFct)(void*, void*)) {
     if (!L || L->numelm <= 1) return;
 
-    list_elm_t* pivot = get_head(L);
-    list_t* smaller = new_list();
-    list_t* greater = new_list();
+    list_elm_t* head = get_head(L);
+    void* pivot = get_data(head);
 
-    for (list_elm_t* E = get_suc(pivot); E; E = get_suc(E)) {
+    list_t* left = new_list();
+    list_t* right = new_list();
+
+    // Partition
+    for (list_elm_t* E = get_suc(head); E; E = get_suc(E)) {
         void* data = get_data(E);
-        if (cmpFct(data, pivot->data) < 0) {
-            queue(smaller, data);
-        }
-        else {
-            queue(greater, data);
-        }
+        if (cmpFct(data, pivot) < 0)
+            queue(left, data);
+        else
+            queue(right, data);
     }
 
-    quick_sort(smaller, cmpFct);
-    quick_sort(greater, cmpFct);
+    // Recurse
+    quick_sort(left, cmpFct);
+    quick_sort(right, cmpFct);
 
+    // Rebuild L
     clean(L);
-    for (list_elm_t* E = get_head(smaller); E; E = get_suc(E)) {
+    for (list_elm_t* E = get_head(left); E; E = get_suc(E))
         queue(L, get_data(E));
-    }
-    queue(L, pivot->data);
-    for (list_elm_t* E = get_head(greater); E; E = get_suc(E)) {
+    queue(L, pivot);
+    for (list_elm_t* E = get_head(right); E; E = get_suc(E))
         queue(L, get_data(E));
-    }
 
-    del_list(&smaller, NULL);
-    del_list(&greater, NULL);
+    del_list(&left, NULL);
+    del_list(&right, NULL);
 }
 
 // Lecture d'un fichier .dta et construction du graphe
@@ -67,23 +68,25 @@ list_t* read_graph(char* path) {
 
     // Lecture des jobs
     for (int i = 0; i < nb_jobs; i++) {
-        char name[128];
+        char name[100];
         double life;
-        if (fscanf(f, "%127s %lf", name, &life) != 2) break;
+        fscanf(f, "%s %lf", name, &life);
         jobs[i] = new_job(name);
         set_job_life(jobs[i], life);
         queue(G, jobs[i]);
     }
 
-    // Lecture des dépendances 
+    // Lecture des dépendances (indices)
     int pred, succ;
     while (fscanf(f, "%d %d", &pred, &succ) == 2) {
-        job_t* J1 = jobs[pred];
-        job_t* J2 = jobs[succ];
-        ordered_insert(J1->posteriority, J2, &titleJobCmp);
-        ordered_insert(J2->precedence, J1, &titleJobCmp);
-        incr_job_oDegree(J1);
-        incr_job_iDegree(J2);
+        if (pred >= 0 && pred < nb_jobs && succ >= 0 && succ < nb_jobs) {
+            job_t* J1 = jobs[pred];
+            job_t* J2 = jobs[succ];
+            ordered_insert(J1->posteriority, J2, &titleJobCmp);
+            ordered_insert(J2->precedence, J1, &titleJobCmp);
+            incr_job_oDegree(J1);
+            incr_job_iDegree(J2);
+        }
     }
 
     free(jobs);
