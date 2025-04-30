@@ -3,6 +3,16 @@
 ## Objectif du projet
 Ce projet vise à développer un système de gestion de tâches sous forme de graphe, où chaque tâche a une durée spécifique, et les tâches peuvent avoir des dépendances entre elles. L'objectif est de modéliser ces tâches et leurs relations, puis de calculer le rang des tâches ainsi que leurs marges totales et libres. Ce projet inclut des opérations telles que le tri des tâches en fonction de divers critères, la prune des dépendances inutiles, et le calcul de la marge.
 
+Fonctionnalités
+1. Ranking
+Attribue un rang à chaque tâche en respectant l'ordre topologique du graphe. Une tâche de rang zéro ne dépend d'aucune autre. Les rangs sont calculés en fonction des dépendances amont.
+
+2. Prune
+Supprime les arcs redondants du graphe. Un arc est considéré comme redondant si la tâche cible est déjà atteignable depuis la tâche source par un autre chemin.
+
+3. Marges
+Calcule les dates au plus tôt et au plus tard pour chaque tâche. Détermine les marges totales et libres. Identifie les tâches critiques dont la marge est nulle. Ces tâches sont indispensables au respect de la durée minimale du projet.
+
 ## Fonctionnalités principales
 1. **Lecture des tâches depuis un fichier**
    - Les tâches sont lues depuis un fichier .dta contenant les informations sur les tâches nom et durée ainsi que les dépendances entre elles.
