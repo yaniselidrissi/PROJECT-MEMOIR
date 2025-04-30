@@ -3,7 +3,7 @@
 ## Objectif du projet
 Ce projet vise à développer un système de gestion de tâches sous forme de graphe, où chaque tâche a une durée spécifique, et les tâches peuvent avoir des dépendances entre elles. L'objectif est de modéliser ces tâches et leurs relations, puis de calculer le rang des tâches ainsi que leurs marges totales et libres. Ce projet inclut des opérations telles que le tri des tâches en fonction de divers critères, la prune des dépendances inutiles, et le calcul de la marge.
 
-Fonctionnalités
+## Fonctionnalités
 1. Ranking
 Attribue un rang à chaque tâche en respectant l'ordre topologique du graphe. Une tâche de rang zéro ne dépend d'aucune autre. Les rangs sont calculés en fonction des dépendances amont.
 
